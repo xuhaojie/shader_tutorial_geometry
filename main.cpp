@@ -8,7 +8,9 @@
 #include "shader.h"
 #include "texture.h"
 #include "camera.h"
+
 struct camera_context* camera;
+
 GLFWwindow* create_window(int width, int height, const char* title) {
 	glfwWindowHint(GLFW_SAMPLES, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -273,7 +275,7 @@ int main( void )
 	}
 
 	// 确保后续可以检测到ESC键被按下, Windows系统好像不需要?
-	//glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
 
 
@@ -328,6 +330,9 @@ int main( void )
 }
 
 int camera_destory(struct camera_context* context){
-	delete context;
+	if(context){
+		delete context;
+	}
+
 	return 0;
 }

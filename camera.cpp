@@ -32,6 +32,18 @@ struct camera_context {
 	double m_scale = 1.0f;
 };
 
+static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
+	void* p= glfwGetWindowUserPointer(window);
+	struct camera_context* camera = (struct camera_context*)p;
+	if (yoffset > 0) {
+		camera->m_scale += 1.0;
+	}
+	else
+	{
+		camera->m_scale -= 1.0;
+	}
+}
+
 struct camera_context* camera_create(GLFWwindow* window, GLuint program) {
 	struct camera_context* camera = new camera_context;
     // Get mouse position
@@ -43,8 +55,8 @@ struct camera_context* camera_create(GLFWwindow* window, GLuint program) {
 	camera->m_lastTime = glfwGetTime();
 	// Get mouse position
 	glfwGetCursorPos(window, &camera->pre_xpos, &camera->pre_ypos);
-//	glfwSetWindowUserPointer(window, this);
-//	glfwSetScrollCallback(window, ScrollCallback);
+	glfwSetWindowUserPointer(window, camera);
+	glfwSetScrollCallback(window, scroll_callback);
    // Get a handle for our "MVP" uniform
     camera->m_matrixID = glGetUniformLocation(program, "MVP");
 
@@ -65,6 +77,8 @@ struct camera_context* camera_create(GLFWwindow* window, GLuint program) {
     glm::mat4 Model = glm::mat4(1.0f);
     // Our ModelViewProjection : multiplication of our 3 matrices
     camera->m_MVP = Projection * View * Model; // Remember, matrix multiplication is the other way around
+
+	
     return camera;
 }
 
