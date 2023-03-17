@@ -49,11 +49,6 @@ int main( void )
 	// 执行这句后，OpenGL环境才就绪
 	glfwMakeContextCurrent(window);
 
-	int nrAttributes;
-	// 获取系统最大支持的顶点属性的数量，通常为16
-	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
-	printf("Maximum nr of vertex attributes supported: %d\n", nrAttributes);
-
 	// 初始化GLEW
 	glewExperimental = true; // Needed for core profile
 	if (glewInit() != GLEW_OK) {
@@ -62,6 +57,18 @@ int main( void )
 		glfwTerminate();
 		return -1;
 	}
+
+    // print out some info about the graphics drivers
+    printf("OpenGL version: %s\n", glGetString(GL_VERSION));
+	printf("GLSL version: %s\n" , glGetString(GL_SHADING_LANGUAGE_VERSION));
+    printf("Vendor: %s\n" ,glGetString(GL_VENDOR));
+    printf("Renderer: %s\n" ,glGetString(GL_RENDERER));
+	// 获取系统最大支持的顶点属性的数量，通常为16
+	GLint num = 0;
+	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &num);
+	printf("Maximum vertex attributes supported: %d\n", num);
+
+
 
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
