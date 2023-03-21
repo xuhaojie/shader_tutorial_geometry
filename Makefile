@@ -14,7 +14,7 @@ LIBS = -ldl -lstdc++ -lGL -lGLEW -lglfw
 
 #目标文件依赖于.o文件
 shader:$(ObjFiles)
-	g++ -o $@ $(INCLUDES) $(SrcFiles) $(LIBS)
+	g++ -o $@ $(INCLUDES) $(CFLAGS) $(SrcFiles) $(LIBS)
 
 #.o文件依赖于.cpp文件，通配使用，一条就够
 %.o:%.cpp

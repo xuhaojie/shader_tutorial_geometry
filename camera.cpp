@@ -1,6 +1,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include "camera.h"
+
 struct camera_context {
 	// Initial Field of View
 	const float initial_FoV = 45.0f;
@@ -45,6 +46,7 @@ struct camera_context {
 int camera_update_project_matrix(struct camera_context* camera, float ratio){
 	float FoV = camera->initial_FoV - camera->scale;
 	camera->projection_matrix = glm::perspective(glm::radians(FoV), ratio, 0.1f, 100.0f);
+	return 0;
 }
 
 static void mouse_wheel_scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
@@ -57,7 +59,7 @@ static void mouse_wheel_scroll_callback(GLFWwindow* window, double xoffset, doub
 	{
 		camera->scale -= 1.0f;
 	}
-	camera_update(camera,0.0f, 0.0f, 0.0f, 0.0f);
+	camera_update(camera, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 static void mouse_cursor_pos_callback (GLFWwindow *window, double xpos, double ypos){
@@ -110,12 +112,13 @@ int camera_init(struct camera_context* camera, GLFWwindow* window, GLuint progra
 	int width, height;
 	glfwGetWindowSize(window, &width, &height);	
 	camera->projection_matrix = glm::perspective(glm::radians(FoV), float(width) / float(height), 0.1f, 100.0f);
+	
    // Get a handle for our "MVP" uniform
 	camera->mvp_uniform_location = glGetUniformLocation(program, "MVP");
 	camera->window = window;
+	camera_update(camera,0.0f,0.0f,0.0f,0.0f);
 	return 0;
 }
-
 
 
 int camera_update(struct camera_context* context, float dx, float dy,float dha, float dva){
@@ -137,7 +140,7 @@ int camera_update(struct camera_context* context, float dx, float dy,float dha, 
 
 	// Up vector
 	glm::vec3 up = glm::cross(right, direction);
-/*
+
 	float FoV = context->initial_FoV - context->scale;
 
 	//glfwGetCursorPos(window, &camera->pre_cursor_pos_x, &camera->pre_cursor_pos_y);
@@ -145,7 +148,7 @@ int camera_update(struct camera_context* context, float dx, float dy,float dha, 
 	glfwGetWindowSize(context->window, &width, &height);
 	// Projection matrix : 45 Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
 	context->projection_matrix = glm::perspective(glm::radians(FoV), float(width) / float(height), 0.1f, 100.0f);
-*/	
+
 	context->position += direction * dx;
 	context->position += right * dy;
 
@@ -158,11 +161,13 @@ int camera_update(struct camera_context* context, float dx, float dy,float dha, 
 	);
 
 	context->MVP = context->projection_matrix * context->view_matrix * context->model_matrix;
+	return 0;
 }
 
 int camera_scale(struct camera_context* context, float scale){
 	context->scale = scale;
 	camera_update(context, 0.0f, 0.0f, 0.0f, 0.0f);
+	return 0;
 }
 
 int camera_handle_inputs(struct camera_context* context){
@@ -199,5 +204,13 @@ int camera_handle_inputs(struct camera_context* context){
 int camera_apply(struct camera_context* context){
 	// Send our transformation to the currently bound shader, in the "MVP" uniform
 	glUniformMatrix4fv(context->mvp_uniform_location, 1, GL_FALSE, &context->MVP[0][0]);
+	return 0;
+}
+
+int camera_destory(struct camera_context* context){
+	if(nullptr != context){
+		delete context;
+	}
+
 	return 0;
 }

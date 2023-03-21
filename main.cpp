@@ -17,8 +17,7 @@ GLFWwindow* create_window(int width, int height, const char* title) {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// Open a window and create its OpenGL context
-	GLFWwindow* window = glfwCreateWindow(width, height, title, NULL, NULL);
-	return window;
+	return glfwCreateWindow(width, height, title, NULL, NULL);
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -67,8 +66,6 @@ int main( void )
 	GLint num = 0;
 	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &num);
 	printf("Maximum vertex attributes supported: %d\n", num);
-
-
 
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
@@ -135,14 +132,6 @@ int main( void )
 
 	// Close OpenGL window and terminate GLFW
 	glfwTerminate();
-
-	return 0;
-}
-
-int camera_destory(struct camera_context* context){
-	if(context){
-		delete context;
-	}
 
 	return 0;
 }
