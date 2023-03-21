@@ -45,6 +45,7 @@ int main( void )
 		glfwTerminate();
 		return -1;
 	}
+	
 	// 执行这句后，OpenGL环境才就绪
 	glfwMakeContextCurrent(window);
 

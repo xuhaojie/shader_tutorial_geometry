@@ -83,7 +83,6 @@ static void mouse_button_callback (GLFWwindow *window,  int button, int action, 
 		if(action == GLFW_RELEASE){
 			camera->draging = false;
 		}
-
 	}else{
 		if(action == GLFW_PRESS ){
 			camera->draging = true;

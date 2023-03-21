@@ -11,7 +11,8 @@
 int setup_scene(SceneContext* scene_context, const char* vertexShader, const char* fragmentShader) {
 
 	// Read our .obj file
-	bool res = loadOBJ("cube.obj", scene_context->vertices, scene_context->uvs, scene_context->normals);
+	bool res = loadOBJ("suzanne.obj", scene_context->vertices, scene_context->uvs, scene_context->normals);
+	//bool res = loadOBJ("cube.obj", scene_context->vertices, scene_context->uvs, scene_context->normals);
 
 	// 创建VBO
 	glGenBuffers(1, &scene_context->vbo_vertices);
@@ -84,7 +85,7 @@ int setup_scene(SceneContext* scene_context, const char* vertexShader, const cha
 		3,                  // size
 		GL_FLOAT,           // type
 		GL_FALSE,           // normalized?
-		5 * sizeof(GL_FLOAT),                  // stride
+		0 * sizeof(GL_FLOAT),                  // stride
 		(void*)0            // array buffer offset
 	);
 
@@ -95,7 +96,7 @@ int setup_scene(SceneContext* scene_context, const char* vertexShader, const cha
 		2,                  // size
 		GL_FLOAT,           // type
 		GL_FALSE,           // normalized?
-		2 * sizeof(GL_FLOAT),                  // stride
+		0 * sizeof(GL_FLOAT),                  // stride
 		(void*)(0 * sizeof(float))            // array buffer offset
 	);
 
@@ -106,7 +107,7 @@ int setup_scene(SceneContext* scene_context, const char* vertexShader, const cha
 		3,                  // size
 		GL_FLOAT,           // type
 		GL_FALSE,           // normalized?
-		3 * sizeof(GL_FLOAT),                  // stride
+		0 * sizeof(GL_FLOAT),                  // stride
 		(void*)(0 * sizeof(float))            // array buffer offset
 	);
 
@@ -116,18 +117,18 @@ int setup_scene(SceneContext* scene_context, const char* vertexShader, const cha
 	glEnableVertexAttribArray(2);
 
 	// Load Texture
-	const char* image_path = "uvmap.DDS";
+	const char* image_path = "suzanne.DDS";
 	printf("Reading image %s\n", image_path);
 	GLuint textureID = loadDDS(image_path);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	GLuint location = glGetUniformLocation(scene_context->program,"my_texture_sampler");
 	glUniform1i(location,0);
-
-	glm::vec3 light_pos = glm::vec3(4,4,4);
+/*
+	glm::vec3 light_pos = glm::vec3(0,4,5);
 	location = glGetUniformLocation(scene_context->program,"LightPosition_worldspace");
 	glUniform3f(location,light_pos.x, light_pos.y, light_pos.z);
-
+*/
 	return 0;
 }
 
@@ -162,7 +163,7 @@ void update_uniform(GLFWwindow* window, GLuint program) {
 
 	uniform_location = glGetUniformLocation(program, "LightPosition_worldspace");
 
-	glUniform3f(uniform_location, 0.0, sin(timeValue)*4.0, 4.0);
+	glUniform3f(uniform_location, 0.0, sin(timeValue*3.14)*3.0, 5.0);
 
 }
 
@@ -208,7 +209,7 @@ int render_scene(GLFWwindow* window, SceneContext* scene_context) {
 	);
 
 	// Draw the triangles!
-	glDrawArrays(GL_TRIANGLES, 0, 12*3); // 3 indices starting at 0 -> 1 triangle
+	glDrawArrays(GL_TRIANGLES, 0, scene_context->vertices.size());
 
 	return 0;
 }

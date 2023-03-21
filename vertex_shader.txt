@@ -17,6 +17,7 @@ uniform mat4 V;
 uniform mat4 M;
 uniform vec3 LightPosition_worldspace;
 uniform float time_value;
+
 vec3 erot(vec3 p, vec3 ax, float ro){
     return mix(dot(ax,p)*ax, p, cos(ro)) + cross(ax, p)*sin(ro);
 }
@@ -34,7 +35,7 @@ void main(){
     // 旋转后的顶点位置
     //vec4 rotated_model_pos =  vec4(erot(vertexPosition_modelspace, vec3(0,1,0), angle), 1.0f);
     vec4 rotated_model_pos = r * vec4( vertexPosition_modelspace, 1.0f);
-    
+
     // 输出的顶点位置，在剪裁空间内
     gl_Position = MVP * rotated_model_pos;
 
@@ -53,7 +54,7 @@ void main(){
     LightDirection_cameraspace = LightPosition_cameraspace + EyeDirection_cameraspace;
 
     // 相机空间的顶点法线
-    Normal_cameraspace = (V * M * vec4(vertexNormal_modelspace, 1.0f)).xyz;
+    Normal_cameraspace = (V * M * vec4(vertexNormal_modelspace, 0.0f)).xyz;
 
     // 顶点UV
     uv = vertexUV;
