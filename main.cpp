@@ -40,12 +40,12 @@ int main( void )
 
 	GLFWwindow* window = create_window(1024, 768, "Shader Tutorial --- Cube");
 	if (window == NULL) {
-		fprintf(stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n");
+		fprintf(stderr, "Failed to open GLFW window.\n");
 		getchar();
 		glfwTerminate();
 		return -1;
 	}
-	
+
 	// 执行这句后，OpenGL环境才就绪
 	glfwMakeContextCurrent(window);
 
