@@ -1,6 +1,12 @@
-
+#include <vector>
+#include <glm/glm.hpp>
 struct SceneContext {
-	GLuint vbo;
+	std::vector<glm::vec3> vertices;
+	std::vector<glm::vec2> uvs;
+	std::vector<glm::vec3> normals; // Won't be used at the moment.
+	GLuint vbo_vertices;
+	GLuint vbo_uvs;
+	GLuint vbo_normals;
 	GLuint vao;
 	GLuint program;
 };
