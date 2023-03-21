@@ -156,7 +156,11 @@ void update_uniform(GLFWwindow* window, GLuint program) {
 
 	float timeValue = glfwGetTime();
 
-	int uniform_location = glGetUniformLocation(program, "LightPosition_worldspace");
+
+	int uniform_location = glGetUniformLocation(program, "time_value");
+	glUniform1f(uniform_location, timeValue);
+
+	uniform_location = glGetUniformLocation(program, "LightPosition_worldspace");
 
 	glUniform3f(uniform_location, 0.0, sin(timeValue)*4.0, 4.0);
 

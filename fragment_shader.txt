@@ -1,14 +1,12 @@
 #version 330 core
 
-smooth in vec4 interpolateColor;
-
 // Ouput data
 out vec3 finalColor;
 
 
 // uniform vec4 ourColor;
 in vec3 vertexColor;
-in vec2 vertexUV;
+in vec2 uv;
 in vec3 Position_worldspace;
 in vec3 Normal_cameraspace;
 in vec3 EyeDirection_cameraspace;
@@ -25,7 +23,7 @@ void main()
 	float light_power = 50.f;
 
 	// Materia properties
-	vec3 material_diffuse_color = texture(my_texture_sampler,vertexUV).rgb;
+	vec3 material_diffuse_color = texture(my_texture_sampler, uv).rgb;
 	vec3 material_ambient_color = vec3(0.1,0.1,0.1) * material_diffuse_color;
 	vec3 material_specular_color =vec3(0.3,0.3,0.3);
 
