@@ -34,10 +34,6 @@ int setup_scene(SceneContext* scene_context, const char* vertexShader, const cha
 	// 传递数据到VBO
 	glBufferData(GL_ARRAY_BUFFER, scene_context->normals.size() * sizeof(glm::vec3), &scene_context->normals[0], GL_STATIC_DRAW);
 
-
-	// 传输数据到VBO
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(g_cube_vertex_buffer_data), g_cube_vertex_buffer_data, GL_STATIC_DRAW);
-
 	// 创建VAO
 	glGenVertexArrays(1, &scene_context->vao);
 
@@ -80,6 +76,7 @@ int setup_scene(SceneContext* scene_context, const char* vertexShader, const cha
 	glDeleteShader(fragmentShaderId);
 
 	glUseProgram(scene_context->program);
+
 	glBindBuffer(GL_ARRAY_BUFFER, scene_context->vbo_vertices);
 	// 设置顶点位置属性
 	glVertexAttribPointer(
@@ -122,7 +119,15 @@ int setup_scene(SceneContext* scene_context, const char* vertexShader, const cha
 	const char* image_path = "uvmap.DDS";
 	printf("Reading image %s\n", image_path);
 	GLuint textureID = loadDDS(image_path);
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureID);
+	GLuint location = glGetUniformLocation(scene_context->program,"my_texture_sampler");
+	glUniform1i(location,0);
+
+	glm::vec3 light_pos = glm::vec3(4,4,4);
+	location = glGetUniformLocation(scene_context->program,"LightPosition_worldspace");
+	glUniform3f(location,light_pos.x, light_pos.y, light_pos.z);
+
 	return 0;
 }
 
@@ -148,10 +153,13 @@ int destroy_scene(SceneContext* scene_context) {
 void update_uniform(GLFWwindow* window, GLuint program) {
 
 	// Update uniform
+
 	float timeValue = glfwGetTime();
 
-	int uniform_location = glGetUniformLocation(program, "time_value");
-	glUniform1f(uniform_location, timeValue);
+	int uniform_location = glGetUniformLocation(program, "LightPosition_worldspace");
+
+	glUniform3f(uniform_location, 0.0, sin(timeValue)*4.0, 4.0);
+
 }
 
 int render_scene(GLFWwindow* window, SceneContext* scene_context) {
@@ -162,6 +170,7 @@ int render_scene(GLFWwindow* window, SceneContext* scene_context) {
 	update_uniform(window,scene_context->program);
 	
 	glBindBuffer(GL_ARRAY_BUFFER, scene_context->vbo_vertices);
+
 	// 设置顶点位置属性
 	glVertexAttribPointer(
 		0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.

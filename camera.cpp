@@ -39,6 +39,7 @@ struct camera_context {
 	bool draging = false;
 
 	GLFWwindow* window;
+	GLuint program;
 
 };
 
@@ -116,6 +117,7 @@ int camera_init(struct camera_context* camera, GLFWwindow* window, GLuint progra
    // Get a handle for our "MVP" uniform
 	camera->mvp_uniform_location = glGetUniformLocation(program, "MVP");
 	camera->window = window;
+	camera->program = program;
 	camera_update(camera,0.0f,0.0f,0.0f,0.0f);
 	return 0;
 }
@@ -202,8 +204,14 @@ int camera_handle_inputs(struct camera_context* context){
 }
 
 int camera_apply(struct camera_context* context){
-	// Send our transformation to the currently bound shader, in the "MVP" uniform
+	// Send our transformation to the currently bound shader, in the "MVP" uniformV
 	glUniformMatrix4fv(context->mvp_uniform_location, 1, GL_FALSE, &context->MVP[0][0]);
+
+	GLuint location = glGetUniformLocation(context->program, "M");
+	glUniformMatrix4fv(location, 1, GL_FALSE, &context->model_matrix[0][0]);
+
+	location = glGetUniformLocation(context->program, "V");
+	glUniformMatrix4fv(location, 1, GL_FALSE, &context->view_matrix[0][0]);
 	return 0;
 }
 
