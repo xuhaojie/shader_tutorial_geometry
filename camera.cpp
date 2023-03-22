@@ -8,7 +8,8 @@ struct camera_context
 	const float initial_FoV = 45.0f;
 	const float move_speed = 3.0f; // 3 units / second
 	const float mouse_speed = 0.001;
-
+	const float horizontal_start_angle = 3.14f;
+	const float vertical_start_angle = 0.0f;
 	glm::mat4 model_matrix = glm::mat4(1.0f);
 	glm::mat4 view_matrix = glm::lookAt(
 		glm::vec3(4, 3, 3), // Camera is at (4,3,3), in World Space
@@ -31,11 +32,10 @@ struct camera_context
 	glm::vec3 position = glm::vec3(0, 0, 5);
 
 	// Initial horizontal angle : toward -Z
-	float horizontal_angle = 3.14f;
-	float horizontal_start_angle = 3.14f;
+	float horizontal_angle = horizontal_start_angle;
+
 	// Initial vertical angle : none
-	float vertical_angle = 0.0f;
-	float vertical_start_angle = 0.0f;
+	float vertical_angle = vertical_start_angle;
 
 	double last_time = 0;
 	bool draging = false;
@@ -74,7 +74,11 @@ static void mouse_cursor_pos_callback(GLFWwindow *window, double xpos, double yp
 	if (camera->draging)
 	{
 		// Compute new orientation
-		camera_update(camera, 0.0f, 0.0f, camera->mouse_speed * float(xpos - camera->drag_start_pos_x), camera->mouse_speed * float(ypos - camera->drag_start_pos_y));
+		double dha = camera->mouse_speed * float(xpos - camera->drag_start_pos_x);
+		camera->drag_start_pos_x = xpos;
+		double dva = camera->mouse_speed * float(ypos - camera->drag_start_pos_y);
+		camera->drag_start_pos_y = ypos;	
+		camera_update(camera, 0.0f, 0.0f, dha, dva);
 	}
 	else
 	{
@@ -95,9 +99,8 @@ static void mouse_button_callback(GLFWwindow *window, int button, int action, in
 			double xpos;
 			double ypos;
 			glfwGetCursorPos(window, &xpos, &ypos);
-			camera->horizontal_start_angle += camera->mouse_speed * (xpos - camera->drag_start_pos_x);
-			camera->vertical_start_angle += camera->mouse_speed * (ypos - camera->drag_start_pos_y);
-
+			//camera->horizontal_start_angle += camera->mouse_speed * (xpos - camera->drag_start_pos_x);
+			//camera->vertical_start_angle += camera->mouse_speed * (ypos - camera->drag_start_pos_y);
 		}
 	}
 	else
@@ -146,8 +149,8 @@ int camera_init(struct camera_context *camera, GLFWwindow *window, GLuint progra
 int camera_update(struct camera_context *context, float dx, float dy, float dha, float dva)
 {
 
-	context->horizontal_angle = context->horizontal_start_angle + dha;
-	context->vertical_angle = context->vertical_start_angle + dva;
+	context->horizontal_angle += dha;
+	context->vertical_angle += dva;
 	// Direction : Spherical coordinates to Cartesian coordinates conversion
 	glm::vec3 direction(
 		cos(context->vertical_angle) * sin(context->horizontal_angle),
