@@ -92,6 +92,12 @@ static void mouse_button_callback(GLFWwindow *window, int button, int action, in
 		if (action == GLFW_RELEASE)
 		{
 			camera->draging = false;
+			double xpos;
+			double ypos;
+			glfwGetCursorPos(window, &xpos, &ypos);
+			camera->horizontal_start_angle += camera->mouse_speed * (xpos - camera->drag_start_pos_x);
+			camera->vertical_start_angle += camera->mouse_speed * (ypos - camera->drag_start_pos_y);
+
 		}
 	}
 	else
@@ -237,6 +243,5 @@ int camera_destory(struct camera_context *context)
 	{
 		delete context;
 	}
-
 	return 0;
 }
