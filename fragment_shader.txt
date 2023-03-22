@@ -31,9 +31,9 @@ void main()
 	// 漫反射颜色
 	vec3 material_diffuse_color = texture(my_texture_sampler, uv).rgb;
 	// 环境光颜色
-	vec3 material_ambient_color = vec3(0.1, 0.1, 0.1) * material_diffuse_color;
+	vec3 material_ambient_color = vec3(0.1f, 0.1f, 0.1f) * material_diffuse_color;
 	// 镜面反射颜色
-	vec3 material_specular_color =vec3(0.3, 0.3, 0.3);
+	vec3 material_specular_color =vec3(0.3f, 0.3f, 0.3f);
 
 	// 光源到顶点距离
 	float distance = length(light_position_worldspace - position_worldspace);
