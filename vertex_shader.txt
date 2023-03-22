@@ -12,19 +12,27 @@ out vec3 normal_cameraspace;
 out vec3 eye_direction_cameraspace;
 out vec3 light_direction_cameraspace;
 
+// 相机相关
 uniform mat4 MVP;
 uniform mat4 V;
 uniform mat4 M;
 uniform vec3 light_position_worldspace;
+
+// 用于周期改变模型旋转角度
 uniform float time_value;
 
+// 计算一个点p围绕指定轴ax旋转ro角度后的位置
 vec3 erot(vec3 p, vec3 ax, float ro){
     return mix(dot(ax,p)*ax, p, cos(ro)) + cross(ax, p)*sin(ro);
 }
 
 void main(){
-    float angle = time_value;
+    // 顶点UV
+    uv = vertex_uv;
 
+    // 直接使用当前时间作为角度值
+    float angle = time_value;
+    // 沿Y轴旋转矩阵
     mat4 r = mat4(
         cos(angle), 0.0, sin(angle),  0.0,
         0.0, 1.0, 0.0, 0.0, 
@@ -42,7 +50,6 @@ void main(){
     // 世界空间的顶点位置
     position_worldspace = (M * rotated_model_pos).xyz;
 
-
     // 相机空间的顶点位置
     vec3 vertexPosition_cameraspace = (V * M * rotated_model_pos).xyz;
     // 从顶点进入相机的向量，相机空间
@@ -55,7 +62,4 @@ void main(){
 
     // 相机空间的顶点法线
     normal_cameraspace = (V * M * vec4(vertex_normal_modelspace, 0.0f)).xyz;
-
-    // 顶点UV
-    uv = vertex_uv;
 }
