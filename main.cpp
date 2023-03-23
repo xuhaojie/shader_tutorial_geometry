@@ -6,9 +6,10 @@
 
 #include "scene.h"
 #include "camera.h"
+#include "camera_controller.h"
 
 struct camera_context* camera;
-
+struct camera_controller* camera_controller;
 GLFWwindow* create_window(int width, int height, const char* title) {
 	glfwWindowHint(GLFW_SAMPLES, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -105,12 +106,24 @@ int main( void )
 		return -1;
 	};
 
+	camera_controller = camera_controller_create();
+	if(nullptr == camera_controller){
+		fprintf(stderr, "Failed to create camera_controller!\n");
+		return -1;
+	}
+
+	if(camera_controller_init(camera_controller, window, camera) <0){
+		fprintf(stderr, "Failed to init camera_controller!\n");
+		camera_controller_destory(camera_controller);
+		return -1;
+	};
+
 	// 渲染循环
 	do {
 		// Clear the screen
 		// glClear(GL_COLOR_BUFFER_BIT);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		camera_handle_inputs(camera);
+		camera_controller_handle_inputs(camera_controller);
 		camera_apply(camera);
 		// 渲染场景
 		render_scene(window, &scene_context);

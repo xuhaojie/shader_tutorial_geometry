@@ -4,10 +4,10 @@
 
 struct camera_context
 {
+
 	// Initial Field of View
 	const float initial_FoV = 45.0f;
-	const float move_speed = 3.0f; // 3 units / second
-	const float mouse_speed = 0.001;
+
 	const float horizontal_start_angle = 3.14f;
 	const float vertical_start_angle = 0.0f;
 	glm::mat4 model_matrix = glm::mat4(1.0f);
@@ -25,9 +25,6 @@ struct camera_context
 
 	double scale = 1.0f;
 
-	double drag_start_pos_x = 0.0f;
-	double drag_start_pos_y = 0.0f;
-
 	// Initial position : on +Z
 	glm::vec3 position = glm::vec3(0, 0, 5);
 
@@ -37,8 +34,7 @@ struct camera_context
 	// Initial vertical angle : none
 	float vertical_angle = vertical_start_angle;
 
-	double last_time = 0;
-	bool draging = false;
+
 
 	GLFWwindow *window;
 	GLuint program;
@@ -52,67 +48,6 @@ int camera_update_project_matrix(struct camera_context *camera, float ratio)
 	return 0;
 }
 
-static void mouse_wheel_scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
-{
-	void *p = glfwGetWindowUserPointer(window);
-	struct camera_context *camera = (struct camera_context *)p;
-	if (yoffset > 0)
-	{
-		camera->scale += 1.0f;
-	}
-	else
-	{
-		camera->scale -= 1.0f;
-	}
-	camera_update(camera, 0.0f, 0.0f, 0.0f, 0.0f);
-}
-
-static void mouse_cursor_pos_callback(GLFWwindow *window, double xpos, double ypos)
-{
-	void *p = glfwGetWindowUserPointer(window);
-	struct camera_context *camera = (struct camera_context *)p;
-	if (camera->draging)
-	{
-		// Compute new orientation
-		double dha = camera->mouse_speed * float(xpos - camera->drag_start_pos_x);
-		camera->drag_start_pos_x = xpos;
-		double dva = camera->mouse_speed * float(ypos - camera->drag_start_pos_y);
-		camera->drag_start_pos_y = ypos;	
-		camera_update(camera, 0.0f, 0.0f, dha, dva);
-	}
-	else
-	{
-		// camera->pre_cursor_pos_x = xpos;
-		// camera->pre_cursor_pos_y = ypos;
-	}
-}
-
-static void mouse_button_callback(GLFWwindow *window, int button, int action, int mods)
-{
-	void *p = glfwGetWindowUserPointer(window);
-	struct camera_context *camera = (struct camera_context *)p;
-	if (camera->draging)
-	{
-		if (action == GLFW_RELEASE)
-		{
-			camera->draging = false;
-			double xpos;
-			double ypos;
-			glfwGetCursorPos(window, &xpos, &ypos);
-			//camera->horizontal_start_angle += camera->mouse_speed * (xpos - camera->drag_start_pos_x);
-			//camera->vertical_start_angle += camera->mouse_speed * (ypos - camera->drag_start_pos_y);
-		}
-	}
-	else
-	{
-		if (action == GLFW_PRESS)
-		{
-			camera->draging = true;
-			glfwGetCursorPos(window, &camera->drag_start_pos_x, &camera->drag_start_pos_y);
-		}
-	}
-}
-
 struct camera_context *camera_create()
 {
 	struct camera_context *camera = new camera_context;
@@ -122,15 +57,15 @@ struct camera_context *camera_create()
 int camera_init(struct camera_context *camera, GLFWwindow *window, GLuint program)
 {
 
-	camera->last_time = glfwGetTime();
-
 	// Get mouse position
 	// glfwGetCursorPos(window, &camera->pre_cursor_pos_x, &camera->pre_cursor_pos_y);
-	glfwSetCursorPos(window, camera->drag_start_pos_x, camera->drag_start_pos_y);
+	/*
+	glfwSetCursorPos(window,camera->drag_start_pos_x, camera->drag_start_pos_y);
 	glfwSetWindowUserPointer(window, camera);
 	glfwSetScrollCallback(window, mouse_wheel_scroll_callback);
 	glfwSetCursorPosCallback(window, mouse_cursor_pos_callback);
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
+	*/
 	float FoV = camera->initial_FoV - camera->scale;
 	int width, height;
 	glfwGetWindowSize(window, &width, &height);
@@ -192,40 +127,6 @@ int camera_scale(struct camera_context *context, float scale)
 {
 	context->scale = scale;
 	camera_update(context, 0.0f, 0.0f, 0.0f, 0.0f);
-	return 0;
-}
-
-int camera_handle_inputs(struct camera_context *context)
-{
-
-	const float timeValue = glfwGetTime();
-	const float deltaTime = float(timeValue - context->last_time);
-	context->last_time = timeValue;
-
-	// Move forward
-	if (glfwGetKey(context->window, GLFW_KEY_W) == GLFW_PRESS)
-	{
-		// context->position += direction * deltaTime * context->move_speed;
-		camera_update(context, deltaTime * context->move_speed, 0.0f, 0.0f, 0.0f);
-	}
-	// Move backward
-	if (glfwGetKey(context->window, GLFW_KEY_S) == GLFW_PRESS)
-	{
-		// context->position -= direction * deltaTime * context->move_speed;
-		camera_update(context, -deltaTime * context->move_speed, 0.0f, 0.0f, 0.0f);
-	}
-	// Strafe right
-	if (glfwGetKey(context->window, GLFW_KEY_A) == GLFW_PRESS)
-	{
-		// context->position += right * deltaTime * context->move_speed;
-		camera_update(context, 0.0f, -deltaTime * context->move_speed, 0.0f, 0.0f);
-	}
-	// Strafe left
-	if (glfwGetKey(context->window, GLFW_KEY_D) == GLFW_PRESS)
-	{
-		// context->position -= right * deltaTime * context->move_speed;
-		camera_update(context, 0.0f, deltaTime * context->move_speed, 0.0f, 0.0f);
-	}
 	return 0;
 }
 
