@@ -12,6 +12,6 @@ struct SceneContext {
 	GLuint light_position_location;
 
 };
-int setup_scene(SceneContext* scene_context, const char* vertexShader, const char* fragmentShader);
+int setup_scene(SceneContext* scene_context, const char* vertexShader, const char* fragmentShader,const char* geometryShader);
 int destroy_scene(SceneContext* scene_context);
 int render_scene(GLFWwindow* window, SceneContext* scene_context) ;

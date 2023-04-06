@@ -84,10 +84,14 @@ int main( void )
 	// Accept fragment if it closer to the camera than the former one
 	glDepthFunc(GL_LESS);
 
+	glEnable(GL_CULL_FACE);
+
+	glEnable(GL_PROGRAM_POINT_SIZE); 
+
 	SceneContext scene_context;
 
 	// 创建场景
-	if (setup_scene(&scene_context, "vertex_shader.txt", "fragment_shader.txt") < 0) {
+	if (setup_scene(&scene_context, "vertex_shader.txt", "fragment_shader.txt", "geometry_shader.txt") < 0) {
 		fprintf(stderr, "Failed to setup scene\n");
 		getchar();
 		glfwTerminate();

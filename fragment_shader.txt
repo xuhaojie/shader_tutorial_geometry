@@ -1,54 +1,7 @@
 #version 330 core
-
-// 最终输出的颜色数据
-out vec3 finalColor;
-
-// 来自顶点UV坐标
-in vec2 uv;
-// 顶点位置，世界坐标系
-in vec3 position_worldspace;
-// 顶点法线，相机坐标系
-in vec3 normal_cameraspace;
-// 视线方向，相机坐标系
-in vec3 eye_direction_cameraspace;
-// 光线方向，相机坐标系
-in vec3 light_direction_cameraspace;
-// 纹理采样器
-uniform sampler2D my_texture_sampler;
-// 光源位置
-uniform vec3 light_position_worldspace;
+out vec4 color;
 
 void main()
 {
-	// 光源颜色，这里指定为白色
-	vec3 light_color = vec3(1.0f, 1.0f, 1.0f);
-	// 光源强度
-	float light_power = 50.f;
-	// 结合了强度和颜色的光线值
-	vec3 light_value = light_color * light_power;
-
-	// 材质属性
-	// 漫反射颜色
-	vec3 material_diffuse_color = texture(my_texture_sampler, uv).rgb;
-	// 环境光颜色
-	vec3 material_ambient_color = vec3(0.1f, 0.1f, 0.1f) * material_diffuse_color;
-	// 镜面反射颜色
-	vec3 material_specular_color =vec3(0.3f, 0.3f, 0.3f);
-
-	// 光源到顶点距离
-	float distance = length(light_position_worldspace - position_worldspace);
-	// 光源到顶点距离平方
-	float distance_sq = distance * distance;
-
-    vec3 n = normalize(normal_cameraspace);
-    vec3 l = normalize(light_direction_cameraspace);
-    float cosTheta = clamp(dot(n, l), 0.0f, 1.0f);
-
-    vec3 e = normalize(eye_direction_cameraspace);
-    vec3 r = reflect(-l, n);
-    float cosAlpha = clamp(dot(e,r), 0.0f, 1.0f);
-
-	finalColor = material_ambient_color
-	+ material_diffuse_color* light_value * cosTheta / distance_sq
-	+ material_specular_color * light_value * pow(cosAlpha, 5) / distance_sq;
+    color = vec4(0.0, 1.0, 0.0, 1.0);   
 }
